@@ -1,0 +1,1143 @@
+{
+  "version": "tree-0.1",
+  "tree": {
+    "id": "App",
+    "path": "",
+    "children": {
+      "Tree": {
+        "id": "Tree",
+        "path": "Tree",
+        "constructInfo": {
+          "fqn": "constructs.Construct",
+          "version": "10.1.95"
+        }
+      },
+      "provision-fsx-lustre-step-function": {
+        "id": "provision-fsx-lustre-step-function",
+        "path": "provision-fsx-lustre-step-function",
+        "children": {
+          "LambdaPowerTools": {
+            "id": "LambdaPowerTools",
+            "path": "provision-fsx-lustre-step-function/LambdaPowerTools",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.Resource",
+              "version": "2.40.0"
+            }
+          },
+          "FailState": {
+            "id": "FailState",
+            "path": "provision-fsx-lustre-step-function/FailState",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions.Fail",
+              "version": "2.40.0"
+            }
+          },
+          "SucceedState": {
+            "id": "SucceedState",
+            "path": "provision-fsx-lustre-step-function/SucceedState",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions.Succeed",
+              "version": "2.40.0"
+            }
+          },
+          "ProvisioningWaitState": {
+            "id": "ProvisioningWaitState",
+            "path": "provision-fsx-lustre-step-function/ProvisioningWaitState",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions.Wait",
+              "version": "2.40.0"
+            }
+          },
+          "VPC": {
+            "id": "VPC",
+            "path": "provision-fsx-lustre-step-function/VPC",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.Resource",
+              "version": "2.40.0"
+            }
+          },
+          "FSxSecurityGroup": {
+            "id": "FSxSecurityGroup",
+            "path": "provision-fsx-lustre-step-function/FSxSecurityGroup",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "provision-fsx-lustre-step-function/FSxSecurityGroup/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroup",
+                  "aws:cdk:cloudformation:props": {
+                    "groupDescription": "provision-fsx-lustre-step-function/FSxSecurityGroup",
+                    "securityGroupEgress": [
+                      {
+                        "cidrIp": "0.0.0.0/0",
+                        "description": "Allow all outbound traffic by default",
+                        "ipProtocol": "-1"
+                      }
+                    ],
+                    "vpcId": "vpc-0c224fab5e167df49"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroup",
+                  "version": "2.40.0"
+                }
+              },
+              "from provisionfsxlustrestepfunctionFSxSecurityGroup8ED2925B:988": {
+                "id": "from provisionfsxlustrestepfunctionFSxSecurityGroup8ED2925B:988",
+                "path": "provision-fsx-lustre-step-function/FSxSecurityGroup/from provisionfsxlustrestepfunctionFSxSecurityGroup8ED2925B:988",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroupIngress",
+                  "aws:cdk:cloudformation:props": {
+                    "ipProtocol": "tcp",
+                    "description": "from provisionfsxlustrestepfunctionFSxSecurityGroup8ED2925B:988",
+                    "fromPort": 988,
+                    "groupId": {
+                      "Fn::GetAtt": [
+                        "FSxSecurityGroup560FB068",
+                        "GroupId"
+                      ]
+                    },
+                    "sourceSecurityGroupId": {
+                      "Fn::GetAtt": [
+                        "FSxSecurityGroup560FB068",
+                        "GroupId"
+                      ]
+                    },
+                    "toPort": 988
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroupIngress",
+                  "version": "2.40.0"
+                }
+              },
+              "from provisionfsxlustrestepfunctionFSxSecurityGroup8ED2925B:1021-1023": {
+                "id": "from provisionfsxlustrestepfunctionFSxSecurityGroup8ED2925B:1021-1023",
+                "path": "provision-fsx-lustre-step-function/FSxSecurityGroup/from provisionfsxlustrestepfunctionFSxSecurityGroup8ED2925B:1021-1023",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::EC2::SecurityGroupIngress",
+                  "aws:cdk:cloudformation:props": {
+                    "ipProtocol": "tcp",
+                    "description": "from provisionfsxlustrestepfunctionFSxSecurityGroup8ED2925B:1021-1023",
+                    "fromPort": 1021,
+                    "groupId": {
+                      "Fn::GetAtt": [
+                        "FSxSecurityGroup560FB068",
+                        "GroupId"
+                      ]
+                    },
+                    "sourceSecurityGroupId": {
+                      "Fn::GetAtt": [
+                        "FSxSecurityGroup560FB068",
+                        "GroupId"
+                      ]
+                    },
+                    "toPort": 1023
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_ec2.CfnSecurityGroupIngress",
+                  "version": "2.40.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_ec2.SecurityGroup",
+              "version": "2.40.0"
+            }
+          },
+          "DataSyncBucket": {
+            "id": "DataSyncBucket",
+            "path": "provision-fsx-lustre-step-function/DataSyncBucket",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "provision-fsx-lustre-step-function/DataSyncBucket/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::S3::Bucket",
+                  "aws:cdk:cloudformation:props": {
+                    "lifecycleConfiguration": {
+                      "rules": [
+                        {
+                          "expirationInDays": 180,
+                          "status": "Enabled",
+                          "transitions": [
+                            {
+                              "storageClass": "STANDARD_IA",
+                              "transitionInDays": 30
+                            },
+                            {
+                              "storageClass": "GLACIER",
+                              "transitionInDays": 90
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "publicAccessBlockConfiguration": {
+                      "blockPublicAcls": true,
+                      "blockPublicPolicy": true,
+                      "ignorePublicAcls": true,
+                      "restrictPublicBuckets": true
+                    },
+                    "versioningConfiguration": {
+                      "status": "Enabled"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3.CfnBucket",
+                  "version": "2.40.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_s3.Bucket",
+              "version": "2.40.0"
+            }
+          },
+          "ManageFsxRole": {
+            "id": "ManageFsxRole",
+            "path": "provision-fsx-lustre-step-function/ManageFsxRole",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "provision-fsx-lustre-step-function/ManageFsxRole/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                  "aws:cdk:cloudformation:props": {
+                    "assumeRolePolicyDocument": {
+                      "Statement": [
+                        {
+                          "Action": "sts:AssumeRole",
+                          "Effect": "Allow",
+                          "Principal": {
+                            "Service": "lambda.amazonaws.com"
+                          }
+                        }
+                      ],
+                      "Version": "2012-10-17"
+                    },
+                    "managedPolicyArns": [
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+                          ]
+                        ]
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":iam::aws:policy/AWSXRayDaemonWriteAccess"
+                          ]
+                        ]
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":iam::aws:policy/AmazonFSxFullAccess"
+                          ]
+                        ]
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:",
+                            {
+                              "Ref": "AWS::Partition"
+                            },
+                            ":iam::aws:policy/CloudWatchLambdaInsightsExecutionRolePolicy"
+                          ]
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                  "version": "2.40.0"
+                }
+              },
+              "DefaultPolicy": {
+                "id": "DefaultPolicy",
+                "path": "provision-fsx-lustre-step-function/ManageFsxRole/DefaultPolicy",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "provision-fsx-lustre-step-function/ManageFsxRole/DefaultPolicy/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                      "aws:cdk:cloudformation:props": {
+                        "policyDocument": {
+                          "Statement": [
+                            {
+                              "Action": [
+                                "ec2:DescribeSecurityGroups",
+                                "ec2:DescribeVpcs",
+                                "ec2:DescribeSubnets"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": "*"
+                            },
+                            {
+                              "Action": [
+                                "s3:GetBucketPublicAccessBlock",
+                                "s3:GetBucketPolicyStatus",
+                                "s3:GetEncryptionConfiguration",
+                                "s3:PutBucketPublicAccessBlock",
+                                "s3:ListBucketVersions",
+                                "s3:PutBucketAcl",
+                                "s3:PutBucketPolicy",
+                                "s3:PutBucketNotification",
+                                "s3:ListBucket",
+                                "s3:GetBucketVersioning",
+                                "s3:GetBucketPolicy"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": {
+                                "Fn::GetAtt": [
+                                  "DataSyncBucketC67BD68F",
+                                  "Arn"
+                                ]
+                              }
+                            },
+                            {
+                              "Action": [
+                                "iam:CreateServiceLinkedRole",
+                                "iam:AttachRolePolicy",
+                                "iam:PutRolePolicy",
+                                "iam:DeleteServiceLinkedRole",
+                                "iam:GetServiceLinkedRoleDeletionStatus",
+                                "iam:ListRoles",
+                                "iam:PassRole"
+                              ],
+                              "Condition": {
+                                "StringLike": {
+                                  "iam:AWSServiceName": "fsx.amazonaws.com"
+                                }
+                              },
+                              "Effect": "Allow",
+                              "Resource": "arn:aws:iam::*:role/aws-service-role/fsx.amazonaws.com/*"
+                            },
+                            {
+                              "Action": [
+                                "cloudwatch:PutMetricAlarm",
+                                "cloudwatch:DeleteAlarms"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": "arn:aws:cloudwatch:*:*:alarm:FsxAlarm-*"
+                            },
+                            {
+                              "Action": [
+                                "codeguru-profiler:ConfigureAgent",
+                                "codeguru-profiler:PostAgentProfile"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": {
+                                "Fn::GetAtt": [
+                                  "FsxProvisionHandlerProfilingGroup0838C23B",
+                                  "Arn"
+                                ]
+                              }
+                            },
+                            {
+                              "Action": [
+                                "xray:PutTraceSegments",
+                                "xray:PutTelemetryRecords"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": "*"
+                            },
+                            {
+                              "Action": [
+                                "codeguru-profiler:ConfigureAgent",
+                                "codeguru-profiler:PostAgentProfile"
+                              ],
+                              "Effect": "Allow",
+                              "Resource": {
+                                "Fn::GetAtt": [
+                                  "CheckFsxProvisionHandlerProfilingGroupA7E4BB3D",
+                                  "Arn"
+                                ]
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        },
+                        "policyName": "ManageFsxRoleDefaultPolicy0DFBA148",
+                        "roles": [
+                          {
+                            "Ref": "ManageFsxRole95E24380"
+                          }
+                        ]
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                      "version": "2.40.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Policy",
+                  "version": "2.40.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_iam.Role",
+              "version": "2.40.0"
+            }
+          },
+          "cloudwatch_alarms": {
+            "id": "cloudwatch_alarms",
+            "path": "provision-fsx-lustre-step-function/cloudwatch_alarms",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "provision-fsx-lustre-step-function/cloudwatch_alarms/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::SNS::Topic",
+                  "aws:cdk:cloudformation:props": {}
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_sns.CfnTopic",
+                  "version": "2.40.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_sns.Topic",
+              "version": "2.40.0"
+            }
+          },
+          "LambdaDependencyLayer": {
+            "id": "LambdaDependencyLayer",
+            "path": "provision-fsx-lustre-step-function/LambdaDependencyLayer",
+            "children": {
+              "Code": {
+                "id": "Code",
+                "path": "provision-fsx-lustre-step-function/LambdaDependencyLayer/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "provision-fsx-lustre-step-function/LambdaDependencyLayer/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.40.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "provision-fsx-lustre-step-function/LambdaDependencyLayer/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.40.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.40.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "provision-fsx-lustre-step-function/LambdaDependencyLayer/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::LayerVersion",
+                  "aws:cdk:cloudformation:props": {
+                    "content": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "b2d04ac2111ae33c511bbfc226f59917b8bc6e6e8c10ccc1841c708c9b07d1b7.zip"
+                    },
+                    "compatibleRuntimes": [
+                      "python3.9"
+                    ]
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnLayerVersion",
+                  "version": "2.40.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "@aws-cdk/aws-lambda-python-alpha.PythonLayerVersion",
+              "version": "2.40.0-alpha.0"
+            }
+          },
+          "FsxProvisionHandler": {
+            "id": "FsxProvisionHandler",
+            "path": "provision-fsx-lustre-step-function/FsxProvisionHandler",
+            "children": {
+              "Code": {
+                "id": "Code",
+                "path": "provision-fsx-lustre-step-function/FsxProvisionHandler/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "provision-fsx-lustre-step-function/FsxProvisionHandler/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.40.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "provision-fsx-lustre-step-function/FsxProvisionHandler/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.40.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.40.0"
+                }
+              },
+              "ProfilingGroup": {
+                "id": "ProfilingGroup",
+                "path": "provision-fsx-lustre-step-function/FsxProvisionHandler/ProfilingGroup",
+                "children": {
+                  "ProfilingGroup": {
+                    "id": "ProfilingGroup",
+                    "path": "provision-fsx-lustre-step-function/FsxProvisionHandler/ProfilingGroup/ProfilingGroup",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::CodeGuruProfiler::ProfilingGroup",
+                      "aws:cdk:cloudformation:props": {
+                        "profilingGroupName": "provisionfsxlustrestepfunctionFsxProvisionHandlerProfilingGroupE4426E86",
+                        "computePlatform": "AWSLambda"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_codeguruprofiler.CfnProfilingGroup",
+                      "version": "2.40.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_codeguruprofiler.ProfilingGroup",
+                  "version": "2.40.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "provision-fsx-lustre-step-function/FsxProvisionHandler/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "f837a10d5f8fbff573087ea9acf1ded9883ec987291d0d701237d6d30c227a6e.zip"
+                    },
+                    "role": {
+                      "Fn::GetAtt": [
+                        "ManageFsxRole95E24380",
+                        "Arn"
+                      ]
+                    },
+                    "description": "Lambda to initiate provisioning of FSx for Lustre filesystem",
+                    "environment": {
+                      "variables": {
+                        "AWS_CODEGURU_PROFILER_GROUP_ARN": {
+                          "Fn::GetAtt": [
+                            "FsxProvisionHandlerProfilingGroup0838C23B",
+                            "Arn"
+                          ]
+                        },
+                        "AWS_CODEGURU_PROFILER_ENABLED": "TRUE",
+                        "S3_BUCKET_IMPORT_URL": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "s3://",
+                              {
+                                "Ref": "DataSyncBucketC67BD68F"
+                              },
+                              "/"
+                            ]
+                          ]
+                        },
+                        "S3_BUCKET_EXPORT_URL": {
+                          "Fn::Join": [
+                            "",
+                            [
+                              "s3://",
+                              {
+                                "Ref": "DataSyncBucketC67BD68F"
+                              },
+                              "/"
+                            ]
+                          ]
+                        },
+                        "FSX_SG_ID": {
+                          "Fn::GetAtt": [
+                            "FSxSecurityGroup560FB068",
+                            "GroupId"
+                          ]
+                        },
+                        "FSX_SUBNET_ID": "subnet-0f5ed7126bd8fc9d7",
+                        "POWERTOOLS_SERVICE_NAME": "fsx_provision",
+                        "LOG_LEVEL": "INFO"
+                      }
+                    },
+                    "functionName": "fsx-provision-handler",
+                    "handler": "index.handler",
+                    "layers": [
+                      {
+                        "Ref": "LambdaDependencyLayer5B38FF8A"
+                      },
+                      {
+                        "Fn::FindInMap": [
+                          "CloudwatchlambdainsightsversionMap",
+                          {
+                            "Ref": "AWS::Region"
+                          },
+                          "1x0x119x0xx86x64"
+                        ]
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:aws:lambda:",
+                            {
+                              "Ref": "AWS::Region"
+                            },
+                            ":017000801446:layer:AWSLambdaPowertoolsPython:33"
+                          ]
+                        ]
+                      }
+                    ],
+                    "memorySize": 128,
+                    "runtime": "python3.9",
+                    "timeout": 900,
+                    "tracingConfig": {
+                      "mode": "Active"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.40.0"
+                }
+              },
+              "LambdaInsightsLayer": {
+                "id": "LambdaInsightsLayer",
+                "path": "provision-fsx-lustre-step-function/FsxProvisionHandler/LambdaInsightsLayer",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.40.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "@aws-cdk/aws-lambda-python-alpha.PythonFunction",
+              "version": "2.40.0-alpha.0"
+            }
+          },
+          "Cloudwatch-lambda-insights-versionMap": {
+            "id": "Cloudwatch-lambda-insights-versionMap",
+            "path": "provision-fsx-lustre-step-function/Cloudwatch-lambda-insights-versionMap",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnMapping",
+              "version": "2.40.0"
+            }
+          },
+          "InvokeFsxProvisionTask": {
+            "id": "InvokeFsxProvisionTask",
+            "path": "provision-fsx-lustre-step-function/InvokeFsxProvisionTask",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions_tasks.LambdaInvoke",
+              "version": "2.40.0"
+            }
+          },
+          "CheckFsxProvisionHandler": {
+            "id": "CheckFsxProvisionHandler",
+            "path": "provision-fsx-lustre-step-function/CheckFsxProvisionHandler",
+            "children": {
+              "Code": {
+                "id": "Code",
+                "path": "provision-fsx-lustre-step-function/CheckFsxProvisionHandler/Code",
+                "children": {
+                  "Stage": {
+                    "id": "Stage",
+                    "path": "provision-fsx-lustre-step-function/CheckFsxProvisionHandler/Code/Stage",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.AssetStaging",
+                      "version": "2.40.0"
+                    }
+                  },
+                  "AssetBucket": {
+                    "id": "AssetBucket",
+                    "path": "provision-fsx-lustre-step-function/CheckFsxProvisionHandler/Code/AssetBucket",
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_s3.BucketBase",
+                      "version": "2.40.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_s3_assets.Asset",
+                  "version": "2.40.0"
+                }
+              },
+              "ProfilingGroup": {
+                "id": "ProfilingGroup",
+                "path": "provision-fsx-lustre-step-function/CheckFsxProvisionHandler/ProfilingGroup",
+                "children": {
+                  "ProfilingGroup": {
+                    "id": "ProfilingGroup",
+                    "path": "provision-fsx-lustre-step-function/CheckFsxProvisionHandler/ProfilingGroup/ProfilingGroup",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::CodeGuruProfiler::ProfilingGroup",
+                      "aws:cdk:cloudformation:props": {
+                        "profilingGroupName": "provisionfsxlustrestepfunctionCheckFsxProvisionHandlerProfilingGroup3B4FBEB3",
+                        "computePlatform": "AWSLambda"
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_codeguruprofiler.CfnProfilingGroup",
+                      "version": "2.40.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_codeguruprofiler.ProfilingGroup",
+                  "version": "2.40.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "provision-fsx-lustre-step-function/CheckFsxProvisionHandler/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Lambda::Function",
+                  "aws:cdk:cloudformation:props": {
+                    "code": {
+                      "s3Bucket": {
+                        "Fn::Sub": "cdk-hnb659fds-assets-${AWS::AccountId}-${AWS::Region}"
+                      },
+                      "s3Key": "81c1f78acde588d8603891256981930023a9dc5fa194f2bf214f67ddd696e467.zip"
+                    },
+                    "role": {
+                      "Fn::GetAtt": [
+                        "ManageFsxRole95E24380",
+                        "Arn"
+                      ]
+                    },
+                    "description": "Lambda to check the provisioning status of FSx for Lustre filesystem",
+                    "environment": {
+                      "variables": {
+                        "AWS_CODEGURU_PROFILER_GROUP_ARN": {
+                          "Fn::GetAtt": [
+                            "CheckFsxProvisionHandlerProfilingGroupA7E4BB3D",
+                            "Arn"
+                          ]
+                        },
+                        "AWS_CODEGURU_PROFILER_ENABLED": "TRUE",
+                        "FX_PROVISION_ALARM_EVALUATION_PERIODS": "5",
+                        "FX_PROVISION_ALARM_THRESHOLD": "1099511627776",
+                        "FX_PROVISION_ALARM_PERIOD": "60",
+                        "FX_PROVISION_ALARM_STATISTIC": "Minimum",
+                        "CW_ALARM_TOPIC": {
+                          "Ref": "cloudwatchalarms337435D5"
+                        },
+                        "POWERTOOLS_SERVICE_NAME": "fsx_provision",
+                        "LOG_LEVEL": "INFO"
+                      }
+                    },
+                    "functionName": "fsx-check-provision-handler",
+                    "handler": "index.handler",
+                    "layers": [
+                      {
+                        "Ref": "LambdaDependencyLayer5B38FF8A"
+                      },
+                      {
+                        "Fn::FindInMap": [
+                          "CloudwatchlambdainsightsversionMap",
+                          {
+                            "Ref": "AWS::Region"
+                          },
+                          "1x0x119x0xx86x64"
+                        ]
+                      },
+                      {
+                        "Fn::Join": [
+                          "",
+                          [
+                            "arn:aws:lambda:",
+                            {
+                              "Ref": "AWS::Region"
+                            },
+                            ":017000801446:layer:AWSLambdaPowertoolsPython:33"
+                          ]
+                        ]
+                      }
+                    ],
+                    "memorySize": 128,
+                    "runtime": "python3.9",
+                    "timeout": 900,
+                    "tracingConfig": {
+                      "mode": "Active"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_lambda.CfnFunction",
+                  "version": "2.40.0"
+                }
+              },
+              "LambdaInsightsLayer": {
+                "id": "LambdaInsightsLayer",
+                "path": "provision-fsx-lustre-step-function/CheckFsxProvisionHandler/LambdaInsightsLayer",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.Resource",
+                  "version": "2.40.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "@aws-cdk/aws-lambda-python-alpha.PythonFunction",
+              "version": "2.40.0-alpha.0"
+            }
+          },
+          "InvokeCheckFsxProvisionTask": {
+            "id": "InvokeCheckFsxProvisionTask",
+            "path": "provision-fsx-lustre-step-function/InvokeCheckFsxProvisionTask",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions_tasks.LambdaInvoke",
+              "version": "2.40.0"
+            }
+          },
+          "FSxProvisioningStatusCheck": {
+            "id": "FSxProvisioningStatusCheck",
+            "path": "provision-fsx-lustre-step-function/FSxProvisioningStatusCheck",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions.Choice",
+              "version": "2.40.0"
+            }
+          },
+          "FsxProvisioningLogs": {
+            "id": "FsxProvisioningLogs",
+            "path": "provision-fsx-lustre-step-function/FsxProvisioningLogs",
+            "children": {
+              "Resource": {
+                "id": "Resource",
+                "path": "provision-fsx-lustre-step-function/FsxProvisioningLogs/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::Logs::LogGroup",
+                  "aws:cdk:cloudformation:props": {
+                    "logGroupName": "/aws/vendedlogs/states/fsx-provisioning-logs",
+                    "retentionInDays": 180
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_logs.CfnLogGroup",
+                  "version": "2.40.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_logs.LogGroup",
+              "version": "2.40.0"
+            }
+          },
+          "ProvisionFsxWorkflow": {
+            "id": "ProvisionFsxWorkflow",
+            "path": "provision-fsx-lustre-step-function/ProvisionFsxWorkflow",
+            "children": {
+              "Role": {
+                "id": "Role",
+                "path": "provision-fsx-lustre-step-function/ProvisionFsxWorkflow/Role",
+                "children": {
+                  "Resource": {
+                    "id": "Resource",
+                    "path": "provision-fsx-lustre-step-function/ProvisionFsxWorkflow/Role/Resource",
+                    "attributes": {
+                      "aws:cdk:cloudformation:type": "AWS::IAM::Role",
+                      "aws:cdk:cloudformation:props": {
+                        "assumeRolePolicyDocument": {
+                          "Statement": [
+                            {
+                              "Action": "sts:AssumeRole",
+                              "Effect": "Allow",
+                              "Principal": {
+                                "Service": {
+                                  "Fn::Join": [
+                                    "",
+                                    [
+                                      "states.",
+                                      {
+                                        "Ref": "AWS::Region"
+                                      },
+                                      ".amazonaws.com"
+                                    ]
+                                  ]
+                                }
+                              }
+                            }
+                          ],
+                          "Version": "2012-10-17"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.CfnRole",
+                      "version": "2.40.0"
+                    }
+                  },
+                  "DefaultPolicy": {
+                    "id": "DefaultPolicy",
+                    "path": "provision-fsx-lustre-step-function/ProvisionFsxWorkflow/Role/DefaultPolicy",
+                    "children": {
+                      "Resource": {
+                        "id": "Resource",
+                        "path": "provision-fsx-lustre-step-function/ProvisionFsxWorkflow/Role/DefaultPolicy/Resource",
+                        "attributes": {
+                          "aws:cdk:cloudformation:type": "AWS::IAM::Policy",
+                          "aws:cdk:cloudformation:props": {
+                            "policyDocument": {
+                              "Statement": [
+                                {
+                                  "Action": [
+                                    "logs:CreateLogDelivery",
+                                    "logs:GetLogDelivery",
+                                    "logs:UpdateLogDelivery",
+                                    "logs:DeleteLogDelivery",
+                                    "logs:ListLogDeliveries",
+                                    "logs:PutResourcePolicy",
+                                    "logs:DescribeResourcePolicies",
+                                    "logs:DescribeLogGroups"
+                                  ],
+                                  "Effect": "Allow",
+                                  "Resource": "*"
+                                },
+                                {
+                                  "Action": "lambda:InvokeFunction",
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "FsxProvisionHandler3DBE8544",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "FsxProvisionHandler3DBE8544",
+                                              "Arn"
+                                            ]
+                                          },
+                                          ":*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "Action": "lambda:InvokeFunction",
+                                  "Effect": "Allow",
+                                  "Resource": [
+                                    {
+                                      "Fn::GetAtt": [
+                                        "CheckFsxProvisionHandlerF4B06576",
+                                        "Arn"
+                                      ]
+                                    },
+                                    {
+                                      "Fn::Join": [
+                                        "",
+                                        [
+                                          {
+                                            "Fn::GetAtt": [
+                                              "CheckFsxProvisionHandlerF4B06576",
+                                              "Arn"
+                                            ]
+                                          },
+                                          ":*"
+                                        ]
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ],
+                              "Version": "2012-10-17"
+                            },
+                            "policyName": "ProvisionFsxWorkflowRoleDefaultPolicyC89151C7",
+                            "roles": [
+                              {
+                                "Ref": "ProvisionFsxWorkflowRoleA33E2084"
+                              }
+                            ]
+                          }
+                        },
+                        "constructInfo": {
+                          "fqn": "aws-cdk-lib.aws_iam.CfnPolicy",
+                          "version": "2.40.0"
+                        }
+                      }
+                    },
+                    "constructInfo": {
+                      "fqn": "aws-cdk-lib.aws_iam.Policy",
+                      "version": "2.40.0"
+                    }
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_iam.Role",
+                  "version": "2.40.0"
+                }
+              },
+              "Resource": {
+                "id": "Resource",
+                "path": "provision-fsx-lustre-step-function/ProvisionFsxWorkflow/Resource",
+                "attributes": {
+                  "aws:cdk:cloudformation:type": "AWS::StepFunctions::StateMachine",
+                  "aws:cdk:cloudformation:props": {
+                    "roleArn": {
+                      "Fn::GetAtt": [
+                        "ProvisionFsxWorkflowRoleA33E2084",
+                        "Arn"
+                      ]
+                    },
+                    "definitionString": {
+                      "Fn::Join": [
+                        "",
+                        [
+                          "{\"StartAt\":\"InvokeFsxProvisionTask\",\"States\":{\"InvokeFsxProvisionTask\":{\"Next\":\"InvokeCheckFsxProvisionTask\",\"Retry\":[{\"ErrorEquals\":[\"Lambda.ServiceException\",\"Lambda.AWSLambdaException\",\"Lambda.SdkClientException\"],\"IntervalSeconds\":2,\"MaxAttempts\":6,\"BackoffRate\":2}],\"Type\":\"Task\",\"OutputPath\":\"$.Payload\",\"Resource\":\"arn:",
+                          {
+                            "Ref": "AWS::Partition"
+                          },
+                          ":states:::lambda:invoke\",\"Parameters\":{\"FunctionName\":\"",
+                          {
+                            "Fn::GetAtt": [
+                              "FsxProvisionHandler3DBE8544",
+                              "Arn"
+                            ]
+                          },
+                          "\",\"Payload.$\":\"$\"}},\"InvokeCheckFsxProvisionTask\":{\"Next\":\"FSxProvisioningStatusCheck\",\"Retry\":[{\"ErrorEquals\":[\"Lambda.ServiceException\",\"Lambda.AWSLambdaException\",\"Lambda.SdkClientException\"],\"IntervalSeconds\":2,\"MaxAttempts\":6,\"BackoffRate\":2}],\"Type\":\"Task\",\"OutputPath\":\"$.Payload\",\"Resource\":\"arn:",
+                          {
+                            "Ref": "AWS::Partition"
+                          },
+                          ":states:::lambda:invoke\",\"Parameters\":{\"FunctionName\":\"",
+                          {
+                            "Fn::GetAtt": [
+                              "CheckFsxProvisionHandlerF4B06576",
+                              "Arn"
+                            ]
+                          },
+                          "\",\"Payload.$\":\"$\"}},\"ProvisioningWaitState\":{\"Type\":\"Wait\",\"Seconds\":120,\"Next\":\"InvokeCheckFsxProvisionTask\"},\"FSxProvisioningStatusCheck\":{\"Type\":\"Choice\",\"Choices\":[{\"Variable\":\"$.fsxFilesystemLifecycle\",\"StringEquals\":\"AVAILABLE\",\"Next\":\"SucceedState\"},{\"Variable\":\"$.fsxFilesystemLifecycle\",\"StringEquals\":\"CREATING\",\"Next\":\"ProvisioningWaitState\"}],\"Default\":\"FailState\"},\"FailState\":{\"Type\":\"Fail\"},\"SucceedState\":{\"Type\":\"Succeed\"}}}"
+                        ]
+                      ]
+                    },
+                    "loggingConfiguration": {
+                      "destinations": [
+                        {
+                          "cloudWatchLogsLogGroup": {
+                            "logGroupArn": {
+                              "Fn::GetAtt": [
+                                "FsxProvisioningLogs69C0745E",
+                                "Arn"
+                              ]
+                            }
+                          }
+                        }
+                      ],
+                      "level": "ALL"
+                    },
+                    "stateMachineType": "STANDARD"
+                  }
+                },
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.aws_stepfunctions.CfnStateMachine",
+                  "version": "2.40.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.aws_stepfunctions.StateMachine",
+              "version": "2.40.0"
+            }
+          },
+          "sfn_fsx_provision_arn": {
+            "id": "sfn_fsx_provision_arn",
+            "path": "provision-fsx-lustre-step-function/sfn_fsx_provision_arn",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.40.0"
+            }
+          },
+          "sfn_fsx_provision_name": {
+            "id": "sfn_fsx_provision_name",
+            "path": "provision-fsx-lustre-step-function/sfn_fsx_provision_name",
+            "constructInfo": {
+              "fqn": "aws-cdk-lib.CfnOutput",
+              "version": "2.40.0"
+            }
+          },
+          "CDKMetadata": {
+            "id": "CDKMetadata",
+            "path": "provision-fsx-lustre-step-function/CDKMetadata",
+            "children": {
+              "Default": {
+                "id": "Default",
+                "path": "provision-fsx-lustre-step-function/CDKMetadata/Default",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnResource",
+                  "version": "2.40.0"
+                }
+              },
+              "Condition": {
+                "id": "Condition",
+                "path": "provision-fsx-lustre-step-function/CDKMetadata/Condition",
+                "constructInfo": {
+                  "fqn": "aws-cdk-lib.CfnCondition",
+                  "version": "2.40.0"
+                }
+              }
+            },
+            "constructInfo": {
+              "fqn": "constructs.Construct",
+              "version": "10.1.95"
+            }
+          }
+        },
+        "constructInfo": {
+          "fqn": "aws-cdk-lib.Stack",
+          "version": "2.40.0"
+        }
+      }
+    },
+    "constructInfo": {
+      "fqn": "aws-cdk-lib.App",
+      "version": "2.40.0"
+    }
+  }
+}
