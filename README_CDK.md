@@ -1,8 +1,5 @@
 
-# Welcome to your CDK Python project!
-
-You should explore the contents of this project. It demonstrates a CDK app with an instance of a stack (`provision_fsx_lustre_step_function_stack`)
-which contains an Amazon SQS queue that is subscribed to an Amazon SNS topic.
+# CDK Python project usage
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
@@ -37,14 +34,20 @@ Once the virtualenv is activated, you can install the required dependencies.
 $ pip install -r requirements.txt
 ```
 
+You can also install the required dev-dependencies.
+
+```
+$ pip install -r requirements-dev.txt
+```
+
 At this point you can now synthesize the CloudFormation template for this code.
 
 ```
 $ cdk synth
 ```
 
-You can now begin exploring the source code, contained in the hello directory.
-There is also a very trivial test included that can be run like this:
+You can now begin exploring the source code, contained in the directory.
+There are basic unit tests included that can be run like this:
 
 ```
 $ pytest
