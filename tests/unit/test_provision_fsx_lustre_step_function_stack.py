@@ -16,7 +16,10 @@ def template():
     app = App()
 
     stack = ProvisionFsxLustreStepFunctionStack(
-        app, "provision-fsx-lustre-step-function", vpc_id="some_vpc_id"
+        app,
+        "provision-fsx-lustre-step-function",
+        vpc_id="some_vpc_id",
+        subnet_id="some_subnet_id",
     )
 
     return assertions.Template.from_stack(stack)

@@ -37,6 +37,7 @@ isort = "^5.10.1"
 bandit = {extras = ["toml"], version = "^1.7.4"}
 safety = "^2.2.0"
 pylint = "^2.15.3"
+pytest-cov = "^4.0.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
