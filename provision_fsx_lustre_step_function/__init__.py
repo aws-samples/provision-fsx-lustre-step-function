@@ -50,7 +50,7 @@ FSX_SERVICE_PRINCIPAL = "fsx.amazonaws.com"
 LAMBDA_LAYER_FILE_PATH = "lambda_layer_file_path"
 LAMBDA_FILE_PATH = "lambda_file_path"
 JSON_DATA_FOLDER = "json_data_files"
-LAMBDA_FOLDER = "lambda"
+LAMBDA_FOLDER = "lambdas"
 LAMBDA_LAYER_FOLDER = "lambda_layer"
 VARIABLES_FILE_NAME = "variables"
 
@@ -60,7 +60,7 @@ STATES_PREFIX = "states/"
 POWERTOOLS_SERVICE_NAME = "POWERTOOLS_SERVICE_NAME"
 LOG_LEVEL = "LOG_LEVEL"
 LAMBDA_POWERTOOLS_LAYER = (
-    "arn:aws:lambda:{}:017000801446:layer:AWSLambdaPowertoolsPython:33"
+    "arn:aws:lambda:{}:017000801446:layer:AWSLambdaPowertoolsPython:36"
 )
 
 VPC_ID = "vpc_id"

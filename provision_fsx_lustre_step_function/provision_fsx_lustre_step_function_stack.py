@@ -21,8 +21,8 @@ class ProvisionFsxLustreStepFunctionStack(Stack):
 
         script_dir = pathlib.Path(__file__).parent
 
-        lambda_file_path = str(script_dir.joinpath("lambda"))
-        lambda_layer_file_path = str(script_dir.joinpath("lambda", "lambda_layer"))
+        lambda_file_path = str(script_dir.joinpath("lambdas"))
+        lambda_layer_file_path = str(script_dir.joinpath("lambdas", "lambda_layer"))
         vpc_id = kwargs[VPC_ID]
 
         powertools_layer_version = _lambda.LayerVersion.from_layer_version_arn(
