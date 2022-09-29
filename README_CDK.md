@@ -21,6 +21,7 @@ $ make bootstrap
 ```
 
 NOTE: In `app.py`, you will need to replace `<SOME VPC ID>` with an AWS VPC ID to be able to deploy. 
+NOTE: In `app.py`, you will need to replace `<SOME SUBNET ID>` with an AWS SUBNET ID to be able to deploy. 
 
 At this point you can now synthesize the CloudFormation template for this code.
 
