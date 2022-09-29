@@ -24,6 +24,7 @@ class ProvisionFsxLustreStepFunctionStack(Stack):
         lambda_file_path = str(script_dir.joinpath("lambdas"))
         lambda_layer_file_path = str(script_dir.joinpath("lambdas", "lambda_layer"))
         vpc_id = kwargs[VPC_ID]
+        subnet_id = kwargs[SUBNET_ID]
 
         powertools_layer_version = _lambda.LayerVersion.from_layer_version_arn(
             self,
@@ -105,7 +106,7 @@ class ProvisionFsxLustreStepFunctionStack(Stack):
                 S3_BUCKET_IMPORT_URL: s3_bucket_import_url,
                 S3_BUCKET_EXPORT_URL: s3_bucket_export_url,
                 FSX_SG_ID: fsx_security_group.security_group_id,
-                FSX_SUBNET_ID: "subnet-0f5ed7126bd8fc9d7",
+                FSX_SUBNET_ID: subnet_id,
                 "POWERTOOLS_SERVICE_NAME": "fsx_provision",
                 "LOG_LEVEL": "INFO",
             },

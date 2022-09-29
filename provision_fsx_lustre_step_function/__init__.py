@@ -64,3 +64,4 @@ LAMBDA_POWERTOOLS_LAYER = (
 )
 
 VPC_ID = "vpc_id"
+SUBNET_ID = "subnet_id"
