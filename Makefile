@@ -15,6 +15,9 @@ synth: ## Synthesize the CloudFormation Stack Template from the CDK
 deploy: ## Deploy the CloudFormation Stack to the AWS account
 	@poetry run cdk deploy
 
+teardown: ## Destroy the CloudFormation Stack to the AWS account
+	@poetry run cdk destroy
+
 test: ## Run pytest against the project.
 	@AWS_DEFAULT_REGION="us-east-1" poetry run pytest -v --cov-config=.coveragerc --cov=provision_fsx_lustre_step_function/ tests/unit/test_*.py
 
