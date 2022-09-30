@@ -3,64 +3,54 @@
 
 The `cdk.json` file tells the CDK Toolkit how to execute your app.
 
-This project is set up like a standard Python project.  The initialization process also creates
-a virtualenv within this project, stored under the .venv directory.  To create the virtualenv
-it assumes that there is a `python3` executable in your path with access to the `venv` package.
-If for any reason the automatic creation of the virtualenv fails, you can create the virtualenv
-manually once the init process completes.
+This project is set up like a standard Python project.  
+## Local Setup
 
-To manually create a virtualenv on MacOS and Linux:
+This project utilizes python and poetry. It assumes that these 2 pre-requisites are installed.
 
-```
-$ python3 -m venv .venv
-```
-
-After the init process completes and the virtualenv is created, you can use the following
-step to activate your virtualenv.
+To initialize the environment to run this sample:
 
 ```
-$ source .venv/bin/activate
+$ make init
 ```
 
-If you are a Windows platform, you would activate the virtualenv like this:
+It is also necessary to have an AWS Account Region that is bootstrapped to run CDK. 
 
 ```
-% .venv\Scripts\activate.bat
-```
-
-Once the virtualenv is activated, you can install the required dependencies.
-
-```
-$ pip install -r requirements.txt
-```
-
-You can also install the required dev-dependencies.
-
-```
-$ pip install -r requirements-dev.txt
+$ make bootstrap
 ```
 
 NOTE: In `app.py`, you will need to replace `<SOME VPC ID>` with an AWS VPC ID to be able to deploy. 
+NOTE: In `app.py`, you will need to replace `<SOME SUBNET ID>` with an AWS SUBNET ID to be able to deploy. 
 
 At this point you can now synthesize the CloudFormation template for this code.
 
 ```
-$ cdk synth
+$ make synth
+```
+
+Now you can deploy the CloudFormation to AWS.
+
+```
+$ make deploy
 ```
 
 You can now begin exploring the source code, contained in the directory.
 There are basic unit tests included that can be run like this:
 
 ```
-$ pytest
+$ make test
 ```
 
-To add additional dependencies, for example other CDK libraries, just add to
-your requirements.txt file and rerun the `pip install -r requirements.txt`
-command.
+To add additional dependencies, for example other CDK libraries, you will need to run a `poetry` command.
+
+```
+$ poetry add <package_name>
+```
 
 ## Useful commands
-
+If you wish to run these ny of the following commands for this project 
+you will need to prefix them with `poetry run <command>`.
  * `cdk ls`          list all stacks in the app
  * `cdk synth`       emits the synthesized CloudFormation template
  * `cdk deploy`      deploy this stack to your default AWS account/region
