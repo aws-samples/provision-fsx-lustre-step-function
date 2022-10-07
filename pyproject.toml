@@ -27,6 +27,8 @@ python = "^3.9"
 aws-cdk-lib = "^2.44.0"
 constructs = "^10.1.116"
 "aws-cdk.aws-lambda-python-alpha" = "^2.44.0-alpha.0"
+moto = "^4.0.6"
+docker = "^6.0.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.3"
