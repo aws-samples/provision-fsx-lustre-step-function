@@ -1,5 +1,3 @@
-import pathlib
-
 from aws_cdk import CfnOutput, Duration, Fn, RemovalPolicy, Stack
 from aws_cdk import aws_ec2 as ec2
 from aws_cdk import aws_iam as iam
@@ -12,17 +10,16 @@ from aws_cdk import aws_stepfunctions as sfn
 from aws_cdk import aws_stepfunctions_tasks as sfn_tasks
 from constructs import Construct
 
-from provision_fsx_lustre_step_function import *
+from provision_fsx_lustre_step_function.shared.stack_constants import *
 
 
 class ProvisionFsxLustreStepFunctionStack(Stack):
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id)
 
-        script_dir = pathlib.Path(__file__).parent
+        lambda_file_path = kwargs[LAMBDA_FILE_PATH]
+        lambda_layer_file_path = kwargs[LAMBDA_LAYER_FILE_PATH]
 
-        lambda_file_path = str(script_dir.joinpath("lambdas"))
-        lambda_layer_file_path = str(script_dir.joinpath("lambdas", "lambda_layer"))
         vpc_id = kwargs[VPC_ID]
         subnet_id = kwargs[SUBNET_ID]
 
@@ -115,7 +112,7 @@ class ProvisionFsxLustreStepFunctionStack(Stack):
             memory_size=128,
             timeout=Duration.seconds(900),
             entry="{}/{}".format(lambda_file_path, "fsx_provision"),
-            insights_version=_lambda.LambdaInsightsVersion.VERSION_1_0_119_0,
+            insights_version=_lambda.LambdaInsightsVersion.VERSION_1_0_135_0,
             profiling=True,
         )
 
@@ -151,7 +148,7 @@ class ProvisionFsxLustreStepFunctionStack(Stack):
             memory_size=128,
             timeout=Duration.seconds(900),
             entry="{}/{}".format(lambda_file_path, "fsx_check_provision_status"),
-            insights_version=_lambda.LambdaInsightsVersion.VERSION_1_0_119_0,
+            insights_version=_lambda.LambdaInsightsVersion.VERSION_1_0_135_0,
             profiling=True,
         )
 

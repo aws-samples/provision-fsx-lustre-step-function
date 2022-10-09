@@ -1,9 +1,18 @@
+import pathlib
+
 import aws_cdk.assertions as assertions
 import pytest
 from aws_cdk import App
 
 from provision_fsx_lustre_step_function.provision_fsx_lustre_step_function_stack import (
     ProvisionFsxLustreStepFunctionStack,
+)
+from provision_fsx_lustre_step_function.shared.stack_constants import *
+
+script_dir = pathlib.Path(__file__).parent.parent.parent
+lambda_file_path = str(script_dir.joinpath(STACK_FOLDER, LAMBDA_FOLDER))
+lambda_layer_file_path = str(
+    script_dir.joinpath(STACK_FOLDER, LAMBDA_FOLDER, LAMBDA_LAYER_FOLDER)
 )
 
 
@@ -20,6 +29,8 @@ def template():
         "provision-fsx-lustre-step-function",
         vpc_id="some_vpc_id",
         subnet_id="some_subnet_id",
+        lambda_file_path=lambda_file_path,
+        lambda_layer_file_path=lambda_layer_file_path,
     )
 
     return assertions.Template.from_stack(stack)

@@ -1,18 +1,29 @@
 #!/usr/bin/env python3
 
+import pathlib
+
 from aws_cdk import App
 
 from provision_fsx_lustre_step_function.provision_fsx_lustre_step_function_stack import (
     ProvisionFsxLustreStepFunctionStack,
+)
+from provision_fsx_lustre_step_function.shared.stack_constants import *
+
+script_dir = pathlib.Path(__file__).parent
+lambda_file_path = str(script_dir.joinpath(STACK_FOLDER, LAMBDA_FOLDER))
+lambda_layer_file_path = str(
+    script_dir.joinpath(STACK_FOLDER, LAMBDA_FOLDER, LAMBDA_LAYER_FOLDER)
 )
 
 app = App()
 ProvisionFsxLustreStepFunctionStack(
     app,
     "provision-fsx-lustre-step-function",
-    vpc_id="vpc-0ff0590a918062b01",  # TODO: replace this value with your vpc_id to be able to deploy
-    subnet_id="subnet-09c5b207d2d87dc15",  # TODO: replace this value with a subnet_id from your vpc to deploy
-
+    vpc_id="<SOME_VPC_ID>",  # TODO: replace this value with your vpc_id to be able to deploy
+    subnet_id="<SOME_SUBNET_ID>",  # TODO: replace this value with a subnet_id from your vpc to deploy
+    lambda_file_path=lambda_file_path,
+    lambda_layer_file_path=lambda_layer_file_path,
 )
+
 
 app.synth()

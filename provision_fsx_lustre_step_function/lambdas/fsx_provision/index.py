@@ -6,7 +6,12 @@ import jsonpickle
 from aws_lambda_powertools import Logger, Tracer
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from botocore.exceptions import ClientError
-from constants import *
+
+if os.environ.get("TESTING"):
+    from provision_fsx_lustre_step_function.lambdas.fsx_provision.constants import *
+else:
+    from constants import *
+
 
 tracer = Tracer()  # Sets service via POWERTOOLS_SERVICE_NAME env var
 logger = Logger()
@@ -17,10 +22,18 @@ logger = Logger()
 def handler(event: Dict[str, Any], context: LambdaContext):
     """This lambda initiates the creation operation for an FSx for Lustre Filesystem
 
-    Keyword arguments:
-        event - The AWS Lambda Event Source Request
-        context - The AWS Lambda Context for running this execution
+    Args:
+        event (Dict[str, Any]): The AWS Lambda Event Source Request
+        context (LambdaContext): The AWS Lambda Context for running this execution
+
+    Raises:
+        ValueError: "FSx Filesystem creation failure."
+        Exception: "Error provisioning fsx filesystem."
+
+    Returns:
+        response (Dict[str, Any]): An object containing the information regarding the provisioning status
     """
+
     logger.info("## EVENT\r %s", jsonpickle.encode(event, unpicklable=False))
     logger.info("## CONTEXT\r %s", jsonpickle.encode(context, unpicklable=False))
     partition_size = DEFAULT_FSX_PARTITION_SIZE
@@ -62,6 +75,7 @@ def handler(event: Dict[str, Any], context: LambdaContext):
     except ClientError as e:
         logger.exception("Error provisioning fsx filesystem.")
         error_response = {
+            "operation_name": e.operation_name,
             "error": True,
             "details": jsonpickle.encode(e, unpicklable=False),
         }
