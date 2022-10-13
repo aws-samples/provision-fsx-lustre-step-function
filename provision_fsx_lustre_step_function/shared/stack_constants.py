@@ -1,7 +1,9 @@
 BOTO_MAKE_API_CALL = "botocore.client.BaseClient._make_api_call"
 SERVICE_ID_FSX = "FSx"
+SERVICE_ID_CW = "CloudWatch"
 FSX_CREATE_OPERATION = "CreateFileSystem"
-
+CW_PUT_METRIC_ALARM_OPERATION = "PutMetricAlarm"
+FSX_DESCRIBE_OPERATION = "DescribeFileSystems"
 ENV_VARS = "os.environ"
 
 FILESYSTEM_ID = "fsxFilesystemId"
@@ -11,6 +13,7 @@ FILESYSTEM_LIFECYCLE = "fsxFilesystemLifecycle"
 
 # fsx api response property names
 FILESYSTEM_PROPERTY = "FileSystem"
+FILESYSTEM_IDS_PROPERTY = "FileSystemIds"
 FILESYSTEM_ID_PROPERTY = "FileSystemId"
 DNS_NAME_PROPERTY = "DNSName"
 LUSTRE_CONFIG_PROPERTY = "LustreConfiguration"
@@ -59,6 +62,10 @@ CREATING = "CREATING"
 SUCCEEDED = "SUCCEEDED"
 EXECUTING = "EXECUTING"
 PENDING = "PENDING"
+
+# cloudwatch parameters
+DIMESIONS_PROPERTY = "Dimensions"
+VALUE_PROPERTY = "Value"
 
 # managed policies
 LAMBDA_EXECUTION_POLICY = "service-role/AWSLambdaBasicExecutionRole"

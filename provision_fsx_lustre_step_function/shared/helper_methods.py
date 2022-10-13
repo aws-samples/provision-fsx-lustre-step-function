@@ -40,6 +40,8 @@ def mock_make_api_call(self, operation_name, kwarg):
 
     if service_id == SERVICE_ID_FSX:
         return fsx_stub(self, operation_name, kwarg)
+    elif service_id == SERVICE_ID_CW:
+        return cloudwatch_stub(self, operation_name, kwarg)
 
     return orig(self, operation_name, kwarg)
 
@@ -59,6 +61,42 @@ def fsx_stub(self, operation_name, kwarg):
                 }
             }
         elif kwarg[LUSTRE_CONFIG_PROPERTY][IMPORT_PATH] == INVALID_TEST_URL:
+            return {}
+        else:
+            raise ClientError(
+                {"Error": {"Code": "Code", "Message": "api error"}},
+                operation_name=operation_name,
+            )
+    elif operation_name == FSX_DESCRIBE_OPERATION:
+        print(kwarg)
+        if kwarg[FILESYSTEM_IDS_PROPERTY][0] == "valid_id":
+            return {
+                FILESYSTEMS_PROPERTY: [{
+                    FILESYSTEM_ID: kwarg[FILESYSTEM_IDS_PROPERTY][0],
+                    LIFECYCLE_PROPERTY: CREATING,
+                }]
+            }
+        elif kwarg[FILESYSTEM_IDS_PROPERTY][0] == "valid_id_av":
+            return {
+                FILESYSTEMS_PROPERTY: [{
+                    FILESYSTEM_ID: kwarg[FILESYSTEM_IDS_PROPERTY][0],
+                    LIFECYCLE_PROPERTY: AVAILABLE,
+                }]
+            }
+        elif kwarg[FILESYSTEM_IDS_PROPERTY][0] == "invalid_id":
+            return {}
+        else:
+            raise ClientError(
+                {"Error": {"Code": "Code", "Message": "api error"}},
+                operation_name=operation_name,
+            )
+    else:
+        return orig(self, operation_name, kwarg)
+
+def cloudwatch_stub(self, operation_name, kwarg):
+    if operation_name == CW_PUT_METRIC_ALARM_OPERATION:
+        print(kwarg)
+        if kwarg[DIMESIONS_PROPERTY][0][VALUE_PROPERTY] == "valid_id_av":
             return {}
         else:
             raise ClientError(

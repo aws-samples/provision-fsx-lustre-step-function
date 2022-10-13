@@ -7,11 +7,14 @@ from aws_lambda_powertools import Logger, Tracer
 from aws_lambda_powertools.utilities.data_classes import event_source
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from botocore.exceptions import ClientError
-from check_status_request import CheckStatusRequest
 
 if os.environ.get("TESTING"):
+    from provision_fsx_lustre_step_function.lambdas.fsx_check_provision_status.check_status_request import (
+        CheckStatusRequest,
+    )
     from provision_fsx_lustre_step_function.lambdas.fsx_check_provision_status.constants import *
 else:
+    from check_status_request import CheckStatusRequest
     from constants import *
 
 
