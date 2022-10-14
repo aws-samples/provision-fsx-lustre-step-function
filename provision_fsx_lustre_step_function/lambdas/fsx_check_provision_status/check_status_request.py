@@ -1,5 +1,11 @@
+import os
+
 from aws_lambda_powertools.utilities.data_classes.common import DictWrapper
-from constants import *
+
+if os.environ.get("TESTING"):
+    from provision_fsx_lustre_step_function.lambdas.fsx_check_provision_status.constants import *
+else:
+    from constants import *
 
 
 class CheckStatusRequest(DictWrapper):

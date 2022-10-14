@@ -7,8 +7,16 @@ from aws_lambda_powertools import Logger, Tracer
 from aws_lambda_powertools.utilities.data_classes import event_source
 from aws_lambda_powertools.utilities.typing import LambdaContext
 from botocore.exceptions import ClientError
-from check_status_request import CheckStatusRequest
-from constants import *
+
+if os.environ.get("TESTING"):
+    from provision_fsx_lustre_step_function.lambdas.fsx_check_provision_status.check_status_request import (
+        CheckStatusRequest,
+    )
+    from provision_fsx_lustre_step_function.lambdas.fsx_check_provision_status.constants import *
+else:
+    from check_status_request import CheckStatusRequest
+    from constants import *
+
 
 tracer = Tracer()  # Sets service via POWERTOOLS_SERVICE_NAME env var
 logger = Logger()
@@ -20,27 +28,29 @@ logger = Logger()
 def handler(event: CheckStatusRequest, context: LambdaContext):
     """This lambda checks the status of the creation operation for an FSx for Lustre Filesystem
 
-    Keyword arguments:
-        event - The AWS Lambda Event Source Request
-        context - The AWS Lambda Context for running this execution
+    Args:
+        event (CheckStatusRequest): The AWS Lambda Event Source Request
+        context (LambdaContext): The AWS Lambda Context for running this execution
+
+    Raises:
+        ValueError: FSx FileSystem ID is missing
+        ValueError: "FSx Filesystem with ID not found"
+        Exception: "Error checking FSx provisioning status."
+
+    Returns:
+        response (Dict[str, Any]): An object containing the information regarding the provisioning status
     """
     logger.info("## EVENT\r %s", jsonpickle.encode(event, unpicklable=False))
     logger.info("## CONTEXT\r %s", jsonpickle.encode(context, unpicklable=False))
 
-    if not event.filesystem_id:
+    if not event or not event.filesystem_id:
         raise ValueError("FSx FileSystem ID is missing")
 
     client = get_fsx_client()
 
     try:
         response = client.describe_file_systems(FileSystemIds=[event.filesystem_id])
-        if (
-            not response[FILESYSTEMS_PROPERTY]
-            or len(response[FILESYSTEMS_PROPERTY]) < 1
-        ):
-            raise ValueError(
-                "FSx Filesystem with ID: {} not found".format(event.filesystem_id)
-            )
+        # throws exception if filesystem not found
 
         filesystem = response[FILESYSTEMS_PROPERTY][0]
 
@@ -57,9 +67,13 @@ def handler(event: CheckStatusRequest, context: LambdaContext):
 
         logger.info(jsonpickle.encode(event))
     except ClientError as e:
-        logger.exception("Error checking provisioning status.")
-        event = {"error": True, "details": jsonpickle.encode(e, unpicklable=False)}
-        raise Exception(event)
+        logger.exception("Error checking FSx provisioning status.")
+        error_response = {
+            "operation_name": e.operation_name,
+            "error": True,
+            "details": jsonpickle.encode(e, unpicklable=False),
+        }
+        raise Exception(error_response)
 
     return response
 

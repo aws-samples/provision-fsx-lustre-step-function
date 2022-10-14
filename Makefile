@@ -19,7 +19,7 @@ teardown: ## Destroy the CloudFormation Stack to the AWS account
 	@poetry run cdk destroy
 
 test: ## Run pytest against the project.
-	@AWS_DEFAULT_REGION="us-east-1" poetry run pytest -v --cov-config=.coveragerc --cov=provision_fsx_lustre_step_function/ tests/unit/test_*.py
+	@TESTING=1 AWS_DEFAULT_REGION="us-east-1" poetry run pytest -v --cov-config=.coveragerc --cov=provision_fsx_lustre_step_function/ tests/unit/test_*.py
 
 update-deps: ## Update the package dependencies via Poetry.
 	@poetry update
