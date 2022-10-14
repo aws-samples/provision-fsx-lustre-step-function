@@ -46,6 +46,17 @@ def mock_make_api_call(self, operation_name, kwarg):
     return orig(self, operation_name, kwarg)
 
 
+fsx_status_lookup = {
+    TEST_FSX_ID_1: AVAILABLE,
+    TEST_FSX_ID_2: CREATING,
+    TEST_FSX_ID_3: FAILED,
+    TEST_FSX_ID_4: DELETING,
+    TEST_FSX_ID_5: MISCONFIGURED,
+    TEST_FSX_ID_6: UPDATING,
+    TEST_FSX_ID_7: MISCONFIGURED_UNAVAILABLE,
+}
+
+
 def fsx_stub(self, operation_name, kwarg):
     if operation_name == FSX_CREATE_OPERATION:
         print(kwarg)
@@ -68,23 +79,16 @@ def fsx_stub(self, operation_name, kwarg):
                 operation_name=operation_name,
             )
     elif operation_name == FSX_DESCRIBE_OPERATION:
-        print(kwarg)
-        if kwarg[FILESYSTEM_IDS_PROPERTY][0] == "valid_id":
+        id = kwarg[FILESYSTEM_IDS_PROPERTY][0]
+        if id in fsx_status_lookup:
             return {
-                FILESYSTEMS_PROPERTY: [{
-                    FILESYSTEM_ID: kwarg[FILESYSTEM_IDS_PROPERTY][0],
-                    LIFECYCLE_PROPERTY: CREATING,
-                }]
+                FILESYSTEMS_PROPERTY: [
+                    {
+                        FILESYSTEM_ID: kwarg[FILESYSTEM_IDS_PROPERTY][0],
+                        LIFECYCLE_PROPERTY: fsx_status_lookup[id],
+                    }
+                ]
             }
-        elif kwarg[FILESYSTEM_IDS_PROPERTY][0] == "valid_id_av":
-            return {
-                FILESYSTEMS_PROPERTY: [{
-                    FILESYSTEM_ID: kwarg[FILESYSTEM_IDS_PROPERTY][0],
-                    LIFECYCLE_PROPERTY: AVAILABLE,
-                }]
-            }
-        elif kwarg[FILESYSTEM_IDS_PROPERTY][0] == "invalid_id":
-            return {}
         else:
             raise ClientError(
                 {"Error": {"Code": "Code", "Message": "api error"}},
@@ -93,10 +97,11 @@ def fsx_stub(self, operation_name, kwarg):
     else:
         return orig(self, operation_name, kwarg)
 
+
 def cloudwatch_stub(self, operation_name, kwarg):
     if operation_name == CW_PUT_METRIC_ALARM_OPERATION:
         print(kwarg)
-        if kwarg[DIMESIONS_PROPERTY][0][VALUE_PROPERTY] == "valid_id_av":
+        if kwarg[DIMESIONS_PROPERTY][0][VALUE_PROPERTY] == TEST_FSX_ID_1:
             return {}
         else:
             raise ClientError(

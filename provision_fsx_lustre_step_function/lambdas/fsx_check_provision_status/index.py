@@ -43,18 +43,14 @@ def handler(event: CheckStatusRequest, context: LambdaContext):
     logger.info("## EVENT\r %s", jsonpickle.encode(event, unpicklable=False))
     logger.info("## CONTEXT\r %s", jsonpickle.encode(context, unpicklable=False))
 
-    if not event.filesystem_id:
+    if not event or not event.filesystem_id:
         raise ValueError("FSx FileSystem ID is missing")
 
     client = get_fsx_client()
 
     try:
         response = client.describe_file_systems(FileSystemIds=[event.filesystem_id])
-        if (
-            not response[FILESYSTEMS_PROPERTY]
-            or len(response[FILESYSTEMS_PROPERTY]) < 1
-        ):
-            raise ValueError(f"FSx Filesystem with ID: {event.filesystem_id} not found")
+        # throws exception if filesystem not found
 
         filesystem = response[FILESYSTEMS_PROPERTY][0]
 

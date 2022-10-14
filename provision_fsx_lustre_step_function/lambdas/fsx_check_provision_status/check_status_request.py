@@ -1,4 +1,5 @@
 import os
+
 from aws_lambda_powertools.utilities.data_classes.common import DictWrapper
 
 if os.environ.get("TESTING"):
