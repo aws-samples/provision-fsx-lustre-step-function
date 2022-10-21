@@ -109,6 +109,7 @@ SUBNET_ID = "subnet_id"
 VALID_TEST_URL = "valid_url"
 INVALID_TEST_URL = "invalid_url"
 SOME_ID = "some_id"
+API_ERROR = "api error"
 
 
 TEST_FSX_ID_1 = "id1"

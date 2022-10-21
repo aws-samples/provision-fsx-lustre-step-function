@@ -1,5 +1,3 @@
-from tkinter.tix import InputOnly
-
 from aws_cdk import CfnOutput, Duration, Fn, RemovalPolicy, Stack
 from aws_cdk import aws_ec2 as ec2
 from aws_cdk import aws_iam as iam
