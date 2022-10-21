@@ -2,7 +2,8 @@
 
 import pathlib
 
-from aws_cdk import App
+from aws_cdk import App, Aspects
+from cdk_nag import AwsSolutionsChecks
 
 from provision_fsx_lustre_step_function.provision_fsx_lustre_step_function_stack import (
     ProvisionFsxLustreStepFunctionStack,
@@ -15,15 +16,21 @@ lambda_layer_file_path = str(
     script_dir.joinpath(STACK_FOLDER, LAMBDA_FOLDER, LAMBDA_LAYER_FOLDER)
 )
 
+vpc_id = REPLACE_THIS  # TODO: replace this value with your vpc_id to be able to deploy
+subnet_id = (
+    REPLACE_THIS  # TODO: replace this value with a subnet_id from your vpc to deploy
+)
+
 app = App()
 ProvisionFsxLustreStepFunctionStack(
     app,
     "provision-fsx-lustre-step-function",
-    vpc_id="<SOME_VPC_ID>",  # TODO: replace this value with your vpc_id to be able to deploy
-    subnet_id="<SOME_SUBNET_ID>",  # TODO: replace this value with a subnet_id from your vpc to deploy
+    vpc_id="vpc-0c224fab5e167df49",
+    subnet_id="subnet-0f5ed7126bd8fc9d7",
     lambda_file_path=lambda_file_path,
     lambda_layer_file_path=lambda_layer_file_path,
 )
 
+Aspects.of(app).add(AwsSolutionsChecks())
 
 app.synth()
