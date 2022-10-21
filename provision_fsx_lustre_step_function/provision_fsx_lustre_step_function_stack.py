@@ -99,20 +99,20 @@ class ProvisionFsxLustreStepFunctionStack(Stack):
             sns_subscriptions.EmailSubscription(email_address=ALARM_EMAIL_ADDRESS)
         )
 
-        # NagSuppressions.add_resource_suppressions_by_path(
-        #     self,
-        #     f"/{self.stack_name}/{cw_alarm_topic.node.id}/Resource",
-        #     [
-        #         {
-        #             "id": "AwsSolutions-SNS2",
-        #             "reason": "Encryption is not necessary for a sample to demonstate setting up a CloudWatch Alarm Topic",
-        #         },
-        #         {
-        #             "id": "AwsSolutions-SNS3",
-        #             "reason": "Enabling SSL is not an option via CDK",
-        #         },
-        #     ],
-        # )
+        NagSuppressions.add_resource_suppressions_by_path(
+            self,
+            f"/{self.stack_name}/{cw_alarm_topic.node.id}/Resource",
+            [
+                {
+                    "id": "AwsSolutions-SNS2",
+                    "reason": "Encryption is not necessary for a sample to demonstate setting up a CloudWatch Alarm Topic",
+                },
+                {
+                    "id": "AwsSolutions-SNS3",
+                    "reason": "Enabling SSL is not an option via CDK",
+                },
+            ],
+        )
 
         # IaC for Lambda Layer that will be used to share dependencies
         lambda_dependency_layer = py_lambda.PythonLayerVersion(

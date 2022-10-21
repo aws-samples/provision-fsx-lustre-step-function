@@ -25,8 +25,8 @@ app = App()
 ProvisionFsxLustreStepFunctionStack(
     app,
     "provision-fsx-lustre-step-function",
-    vpc_id="vpc-0c224fab5e167df49",
-    subnet_id="subnet-0f5ed7126bd8fc9d7",
+    vpc_id=REPLACE_THIS,
+    subnet_id=REPLACE_THIS,
     lambda_file_path=lambda_file_path,
     lambda_layer_file_path=lambda_layer_file_path,
 )
