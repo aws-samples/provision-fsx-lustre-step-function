@@ -14,8 +14,8 @@ from provision_fsx_lustre_step_function.shared.stack_constants import *
 def module_loader(module_name: str, path: str) -> Any:
     loader = importlib.machinery.SourceFileLoader(module_name, path)
     spec = importlib.util.spec_from_loader(module_name, loader)
-    function = importlib.util.module_from_spec(spec)
-    loader.exec_module(function)
+    module_spec = importlib.util.module_from_spec(spec)
+    loader.exec_module(module_spec)
 
     handler = function.handler
     return handler
@@ -56,6 +56,8 @@ fsx_status_lookup = {
     TEST_FSX_ID_7: MISCONFIGURED_UNAVAILABLE,
 }
 
+error_object = {"Error": {"Code": "Code", "Message": API_ERROR}}
+
 
 def fsx_stub(self, operation_name, kwarg):
     if operation_name == FSX_CREATE_OPERATION:
@@ -75,23 +77,23 @@ def fsx_stub(self, operation_name, kwarg):
             return {}
         else:
             raise ClientError(
-                {"Error": {"Code": "Code", "Message": "api error"}},
+                error_object,
                 operation_name=operation_name,
             )
     elif operation_name == FSX_DESCRIBE_OPERATION:
-        id = kwarg[FILESYSTEM_IDS_PROPERTY][0]
-        if id in fsx_status_lookup:
+        fsx_id = kwarg[FILESYSTEM_IDS_PROPERTY][0]
+        if fsx_id in fsx_status_lookup:
             return {
                 FILESYSTEMS_PROPERTY: [
                     {
                         FILESYSTEM_ID: kwarg[FILESYSTEM_IDS_PROPERTY][0],
-                        LIFECYCLE_PROPERTY: fsx_status_lookup[id],
+                        LIFECYCLE_PROPERTY: fsx_status_lookup[fsx_id],
                     }
                 ]
             }
         else:
             raise ClientError(
-                {"Error": {"Code": "Code", "Message": "api error"}},
+                error_object,
                 operation_name=operation_name,
             )
     else:
@@ -105,7 +107,7 @@ def cloudwatch_stub(self, operation_name, kwarg):
             return {}
         else:
             raise ClientError(
-                {"Error": {"Code": "Code", "Message": "api error"}},
+                error_object,
                 operation_name=operation_name,
             )
     else:

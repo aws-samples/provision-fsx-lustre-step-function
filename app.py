@@ -8,7 +8,12 @@ from cdk_nag import AwsSolutionsChecks
 from provision_fsx_lustre_step_function.provision_fsx_lustre_step_function_stack import (
     ProvisionFsxLustreStepFunctionStack,
 )
-from provision_fsx_lustre_step_function.shared.stack_constants import *
+from provision_fsx_lustre_step_function.shared.stack_constants import (
+    LAMBDA_FOLDER,
+    LAMBDA_LAYER_FOLDER,
+    REPLACE_THIS,
+    STACK_FOLDER,
+)
 
 script_dir = pathlib.Path(__file__).parent
 lambda_file_path = str(script_dir.joinpath(STACK_FOLDER, LAMBDA_FOLDER))
