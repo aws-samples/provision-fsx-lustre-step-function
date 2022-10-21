@@ -1,13 +1,18 @@
+from tkinter.tix import InputOnly
+
 from aws_cdk import CfnOutput, Duration, Fn, RemovalPolicy, Stack
 from aws_cdk import aws_ec2 as ec2
 from aws_cdk import aws_iam as iam
+from aws_cdk import aws_kms as kms
 from aws_cdk import aws_lambda as _lambda
 from aws_cdk import aws_lambda_python_alpha as py_lambda
 from aws_cdk import aws_logs as logs
 from aws_cdk import aws_s3 as s3
 from aws_cdk import aws_sns as sns
+from aws_cdk import aws_sns_subscriptions as sns_subscriptions
 from aws_cdk import aws_stepfunctions as sfn
 from aws_cdk import aws_stepfunctions_tasks as sfn_tasks
+from cdk_nag import NagSuppressions
 from constructs import Construct
 
 from provision_fsx_lustre_step_function.shared.stack_constants import *
@@ -22,6 +27,12 @@ class ProvisionFsxLustreStepFunctionStack(Stack):
 
         vpc_id = kwargs[VPC_ID]
         subnet_id = kwargs[SUBNET_ID]
+
+        if vpc_id == REPLACE_THIS:
+            raise KeyError("VPC ID is not set.")
+
+        if subnet_id == REPLACE_THIS:
+            raise KeyError("Subnet ID is not set.")
 
         powertools_layer_version = _lambda.LayerVersion.from_layer_version_arn(
             self,
@@ -72,15 +83,36 @@ class ProvisionFsxLustreStepFunctionStack(Stack):
 
         bucket_import_path = ""
         bucket_export_path = ""
-        s3_bucket_import_url = "s3://{}/{}".format(
+        s3_bucket_import_url = S3_URI_TEMPLATE.format(
             s3_bucket.bucket_name, bucket_import_path
         )
-        s3_bucket_export_url = "s3://{}/{}".format(
+        s3_bucket_export_url = S3_URI_TEMPLATE.format(
             s3_bucket.bucket_name, bucket_export_path
         )
 
         # - IAC to provision topic to send CloudWatch Alarm notifications
-        cw_alarm_topic = sns.Topic(self, id="cloudwatch_alarms")
+        cw_alarm_topic = sns.Topic(
+            self,
+            id="cloudwatch_alarms",
+        )
+        cw_alarm_topic.add_subscription(
+            sns_subscriptions.EmailSubscription(email_address=ALARM_EMAIL_ADDRESS)
+        )
+
+        NagSuppressions.add_resource_suppressions_by_path(
+            self,
+            f"/{self.stack_name}/{cw_alarm_topic.node.id}/Resource",
+            [
+                {
+                    "id": "AwsSolutions-SNS2",
+                    "reason": "Encryption is not necessary for a sample to demonstate setting up a CloudWatch Alarm Topic",
+                },
+                {
+                    "id": "AwsSolutions-SNS3",
+                    "reason": "Enabling SSL is not an option via CDK",
+                },
+            ],
+        )
 
         # IaC for Lambda Layer that will be used to share dependencies
         lambda_dependency_layer = py_lambda.PythonLayerVersion(
@@ -201,6 +233,18 @@ class ProvisionFsxLustreStepFunctionStack(Stack):
             state_machine_type=sfn.StateMachineType.STANDARD,
             definition=provision_task,
             logs=log_options,
+            tracing_enabled=True,
+        )
+
+        NagSuppressions.add_resource_suppressions_by_path(
+            self,
+            f"/{self.stack_name}/{_state_machine.node.id}/Role/DefaultPolicy/Resource",
+            [
+                {
+                    "id": "AwsSolutions-IAM5",
+                    "reason": "This role is for Lambdas that are dynamically provisioning FSx Filesystems. It needs to be more permissive.",
+                }
+            ],
         )
 
         # Outputs
@@ -220,9 +264,9 @@ class ProvisionFsxLustreStepFunctionStack(Stack):
         )
 
     def build_fsx_create_role(self, resource_arn: str):
-        all_resources_iam_policy = iam.PolicyStatement(effect=iam.Effect.ALLOW)
-        all_resources_iam_policy.add_resources("*")
-        all_resources_iam_policy.add_actions(
+        network_iam_policy = iam.PolicyStatement(effect=iam.Effect.ALLOW)
+        network_iam_policy.add_all_resources()
+        network_iam_policy.add_actions(
             "ec2:DescribeSecurityGroups", "ec2:DescribeVpcs", "ec2:DescribeSubnets"
         )
 
@@ -250,19 +294,22 @@ class ProvisionFsxLustreStepFunctionStack(Stack):
 
         service_linked_role_policy = iam.PolicyStatement(effect=iam.Effect.ALLOW)
         service_linked_role_policy.add_resources(
-            f"arn:aws:iam::*:role/aws-service-role/{FSX_SERVICE_PRINCIPAL}/*"
+            f"arn:aws:iam::*:role/aws-service-role/{S3_FSX_SERVICE_PRINCIPAL}/*"
         )
         service_linked_role_policy.add_actions(
-            "iam:CreateServiceLinkedRole",
-            "iam:AttachRolePolicy",
-            "iam:PutRolePolicy",
-            "iam:DeleteServiceLinkedRole",
-            "iam:GetServiceLinkedRoleDeletionStatus",
-            "iam:ListRoles",
-            "iam:PassRole",
+            "iam:CreateServiceLinkedRole", "iam:AttachRolePolicy", "iam:PutRolePolicy"
         )
         service_linked_role_policy.add_condition(
-            "StringLike", {"iam:AWSServiceName": FSX_SERVICE_PRINCIPAL}
+            "StringLike", {"iam:AWSServiceName": S3_FSX_SERVICE_PRINCIPAL}
+        )
+
+        fsx_iam_policy = iam.PolicyStatement(effect=iam.Effect.ALLOW)
+        fsx_iam_policy.add_all_resources()
+        fsx_iam_policy.add_actions(
+            "fsx:DescribeFileSystems",
+            "fsx:CreateFileSystem",
+            "fsx:UntagResource",
+            "fsx:TagResource",
         )
 
         manage_fsx_role = iam.Role(
@@ -271,29 +318,69 @@ class ProvisionFsxLustreStepFunctionStack(Stack):
             assumed_by=iam.ServicePrincipal(LAMBDA_SERVICE_PRINCIPAL),
         )
 
-        manage_fsx_role.add_to_policy(all_resources_iam_policy)
+        manage_fsx_role.add_to_policy(network_iam_policy)
         manage_fsx_role.add_to_policy(s3_bucket_iam_policy)
         manage_fsx_role.add_to_policy(service_linked_role_policy)
         manage_fsx_role.add_to_policy(cloudwatch_iam_policy)
+        manage_fsx_role.add_to_policy(fsx_iam_policy)
         manage_fsx_role.add_managed_policy(
             iam.ManagedPolicy.from_aws_managed_policy_name(LAMBDA_EXECUTION_POLICY)
         )
         manage_fsx_role.add_managed_policy(
             iam.ManagedPolicy.from_aws_managed_policy_name(XRAY_WRITE_POLICY)
         )
-        manage_fsx_role.add_managed_policy(
-            iam.ManagedPolicy.from_aws_managed_policy_name(FSX_ACCESS_POLICY)
+
+        NagSuppressions.add_resource_suppressions_by_path(
+            self,
+            f"/{self.stack_name}/{manage_fsx_role.node.id}/Resource",
+            [
+                {
+                    "id": "AwsSolutions-IAM4",
+                    "reason": "Sample should be able to use Managed Policies. Actual implementation should create custom policy.",
+                }
+            ],
+        )
+
+        NagSuppressions.add_resource_suppressions_by_path(
+            self,
+            f"/{self.stack_name}/{manage_fsx_role.node.id}/DefaultPolicy/Resource",
+            [
+                {
+                    "id": "AwsSolutions-IAM5",
+                    "reason": "This role is for Lambdas that are dynamically provisioning FSx Filesystems. It needs to be more permissive.",
+                }
+            ],
         )
 
         return manage_fsx_role
 
     def provision_s3_bucket(self):
+        access_logs_bucket = s3.Bucket(
+            self,
+            "AccessLogsBucket",
+            block_public_access=s3.BlockPublicAccess.BLOCK_ALL,
+            versioned=True,
+            encryption=s3.BucketEncryption.S3_MANAGED,
+            enforce_ssl=True,
+        )
+        NagSuppressions.add_resource_suppressions_by_path(
+            self,
+            f"/{self.stack_name}/{access_logs_bucket.node.id}/Resource",
+            [
+                {
+                    "id": "AwsSolutions-S1",
+                    "reason": "Access Log Bucket doesn't need Access Log Bucket",
+                }
+            ],
+        )
+
         s3_bucket = s3.Bucket(
             self,
             id="DataSyncBucket",
             block_public_access=s3.BlockPublicAccess.BLOCK_ALL,
             versioned=True,
-            encryption=s3.BucketEncryption.UNENCRYPTED,
+            encryption=s3.BucketEncryption.S3_MANAGED,
+            enforce_ssl=True,
             lifecycle_rules=[
                 s3.LifecycleRule(
                     enabled=True,
@@ -310,5 +397,7 @@ class ProvisionFsxLustreStepFunctionStack(Stack):
                     ],
                 )
             ],
+            server_access_logs_bucket=access_logs_bucket,
+            server_access_logs_prefix="logs",
         )
         return s3_bucket

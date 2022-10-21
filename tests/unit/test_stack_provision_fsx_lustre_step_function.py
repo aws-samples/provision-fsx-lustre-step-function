@@ -51,10 +51,11 @@ def test_bucket_created(template: assertions.Template):
     """
     Validates that the Stack creation generated 1 S3 Bucket
     - 1 S3 Bucket to link to the FSx Filesystem
+    - 1 S3 Bucket for Server Access Logs
     :param template: the CDK Stack template
     :return: None
     """
-    template.resource_count_is("AWS::S3::Bucket", 1)
+    template.resource_count_is("AWS::S3::Bucket", 2)
 
 
 def test_sns_topic_created(template: assertions.Template):
