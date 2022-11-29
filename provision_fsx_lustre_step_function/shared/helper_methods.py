@@ -17,7 +17,7 @@ def module_loader(module_name: str, path: str) -> Any:
     module_spec = importlib.util.module_from_spec(spec)
     loader.exec_module(module_spec)
 
-    handler = function.handler
+    handler = module_spec.handler
     return handler
 
 
