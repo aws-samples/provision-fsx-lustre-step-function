@@ -74,7 +74,10 @@ $ make deploy
 
 You can now begin exploring the source code, contained in the directory.
 
-Finally, to cleanup and remove the stack from the AWS account.
+To run the Step Function deployed with this stack, you can simply invoke it directly. It does not require any special inputs and will complete after provisioning is completed.
+
+Finally, to cleanup and remove the stack from the AWS account you can run the command below. 
+NOTE: If you have invoked the Step Function to create an FSx for Lustre filesystem, you will need to delete those filesystems prior to running the teardown of the stack.
 
 ```
 make teardown
