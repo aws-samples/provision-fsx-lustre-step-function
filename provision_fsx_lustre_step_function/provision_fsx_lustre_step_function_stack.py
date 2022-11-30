@@ -44,7 +44,7 @@ class ProvisionFsxLustreStepFunctionStack(Stack):
         # - IaC to set up Succeed step
         succeed_state = sfn.Succeed(self, "SucceedState")
 
-        # IaC to set up 1 minute wait for FSx Status Check
+        # IaC to set up 2 minute wait (120 seconds) for FSx Status Check
         fsx_wait_state = sfn.Wait(
             self,
             "ProvisioningWaitState",
@@ -290,15 +290,26 @@ class ProvisionFsxLustreStepFunctionStack(Stack):
             "cloudwatch:PutMetricAlarm", "cloudwatch:DeleteAlarms"
         )
 
+        service_linked_role_policy_s3 = iam.PolicyStatement(effect=iam.Effect.ALLOW)
+        service_linked_role_policy_s3.add_resources(
+            f"arn:aws:iam::*:role/aws-service-role/{S3_FSX_SERVICE_PRINCIPAL}/*"
+        )
+        service_linked_role_policy_s3.add_actions(
+            "iam:CreateServiceLinkedRole", "iam:AttachRolePolicy", "iam:PutRolePolicy"
+        )
+        service_linked_role_policy_s3.add_condition(
+            "StringLike", {"iam:AWSServiceName": S3_FSX_SERVICE_PRINCIPAL}
+        )
+
         service_linked_role_policy = iam.PolicyStatement(effect=iam.Effect.ALLOW)
         service_linked_role_policy.add_resources(
-            f"arn:aws:iam::*:role/aws-service-role/{S3_FSX_SERVICE_PRINCIPAL}/*"
+            f"arn:aws:iam::*:role/aws-service-role/{FSX_SERVICE_PRINCIPAL}/*"
         )
         service_linked_role_policy.add_actions(
             "iam:CreateServiceLinkedRole", "iam:AttachRolePolicy", "iam:PutRolePolicy"
         )
         service_linked_role_policy.add_condition(
-            "StringLike", {"iam:AWSServiceName": S3_FSX_SERVICE_PRINCIPAL}
+            "StringLike", {"iam:AWSServiceName": FSX_SERVICE_PRINCIPAL}
         )
 
         fsx_iam_policy = iam.PolicyStatement(effect=iam.Effect.ALLOW)
@@ -319,6 +330,7 @@ class ProvisionFsxLustreStepFunctionStack(Stack):
         manage_fsx_role.add_to_policy(network_iam_policy)
         manage_fsx_role.add_to_policy(s3_bucket_iam_policy)
         manage_fsx_role.add_to_policy(service_linked_role_policy)
+        manage_fsx_role.add_to_policy(service_linked_role_policy_s3)
         manage_fsx_role.add_to_policy(cloudwatch_iam_policy)
         manage_fsx_role.add_to_policy(fsx_iam_policy)
         manage_fsx_role.add_managed_policy(
